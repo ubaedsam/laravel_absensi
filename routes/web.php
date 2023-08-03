@@ -26,6 +26,17 @@ Route::middleware(['guest:karyawan'])->group(function(){
     Route::post('/proseslogin',[AuthController::class, 'proseslogin']);
 });
 
+Route::middleware(['guest:user'])->group(function(){
+    // Halaman Login
+    Route::get('/panel', function () {
+        return view('auth.loginadmin');
+    })->name('loginadmin');
+
+    // Proses login
+    Route::post('/prosesloginadmin',[AuthController::class, 'prosesloginadmin']);
+});
+
+// Tipe login karyawan
 Route::middleware(['auth:karyawan'])->group(function(){
     Route::get('/dashboard',[DashboardController::class, 'index']);
     Route::get('/proseslogout',[AuthController::class, 'proseslogout']);
@@ -37,4 +48,19 @@ Route::middleware(['auth:karyawan'])->group(function(){
     // Edit Profile
     Route::get('/editprofile', [PresensiController::class, 'editprofile']);
     Route::post('/presensi/{nik}/updateprofile', [PresensiController::class, 'updateprofile']);
+
+    // Histori Presensi
+    Route::get('/presensi/histori', [PresensiController::class, 'histori']);
+    Route::post('/gethistori', [PresensiController::class, 'gethistori']);
+
+    // Form Izin atau Sakit
+    Route::get('/presensi/izin', [PresensiController::class, 'izin']);
+    Route::get('/presensi/buatizin', [PresensiController::class, 'buatizin']);
+    Route::post('/presensi/storeizin', [PresensiController::class, 'storeizin']);
+});
+
+// Tipe login user (admin)
+Route::middleware(['auth:user'])->group(function(){
+    Route::get('/panel/dashboardadmin',[DashboardController::class, 'dashboardadmin']);
+    Route::get('/proseslogoutadmin',[AuthController::class, 'proseslogoutadmin']);
 });

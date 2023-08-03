@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
+    // Dashboard karyawan
     public function index()
     {
         $hariini = date("Y-m-d");
@@ -22,7 +23,9 @@ class DashboardController extends Controller
         // Menghitung jumlah absensi karyawan apakah hadir, izin, sakit, terlambat
         $rekappresensi = DB::table('presensi')
         ->selectRaw('COUNT(nik) as jmlhadir, SUM(IF(jam_in > "08:00",1,0)) as jmlterlambat')
-        ->where('nik',$nik)->whereRaw('MONTH(tgl_presensi)="'.$bulanini.'"')->whereRaw('YEAR(tgl_presensi)="'. $tahunini .'"')
+        ->where('nik',$nik)
+        ->whereRaw('MONTH(tgl_presensi)="'.$bulanini.'"')
+        ->whereRaw('YEAR(tgl_presensi)="'. $tahunini .'"')
         ->first();
         
         // Menampilkan semua data presensi yang datang hari ini
@@ -33,6 +36,21 @@ class DashboardController extends Controller
         ->get();
         $namabulan = ["","Januari","Febuari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
 
-        return view('dashboard.dashboard', compact('leaderboard','rekappresensi','presensihariini','historibulanini','namabulan','bulanini','tahunini'));
+        // Menjumlahkan data izin atau sakit
+        $rekapizin = DB::table('pengajuan_izin')
+        ->selectRaw('SUM(IF(status="i",1,0)) as jmlizin , SUM(IF(status="s",1,0)) as jmlsakit')
+        ->where('nik', $nik)
+        ->whereRaw('MONTH(tgl_izin)="'.$bulanini.'"')
+        ->whereRaw('YEAR(tgl_izin)="'. $tahunini .'"')
+        ->where('status_approved', 1)
+        ->first();
+
+        return view('dashboard.dashboard', compact('leaderboard','rekappresensi','presensihariini','historibulanini','namabulan','bulanini','tahunini','rekapizin'));
+    }
+
+    // Dashboard admin
+    public function dashboardadmin()
+    {
+        return view('dashboard.dashboardadmin');
     }
 }
