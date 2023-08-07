@@ -22,8 +22,8 @@
     <meta name="mobile-web-app-capable" content="yes"/>
     <meta name="HandheldFriendly" content="True"/>
     <meta name="MobileOptimized" content="320"/>
-    <link rel="icon" href="{{ asset('tabler/') }}favicon.ico" type="image/x-icon"/>
-    <link rel="shortcut icon" href="{{ asset('tabler/') }}favicon.ico" type="image/x-icon"/>
+    <link rel="icon" href="{{ asset('tabler/favicon.ico') }}" type="image/x-icon"/>
+    <link rel="shortcut icon" href="{{ asset('tabler/favicon.ico') }}" type="image/x-icon"/>
     <meta name="description" content="Tabler comes with tons of well-designed components and features. Start your adventure with Tabler and make your dashboard great again. For free!"/>
     <meta name="canonical" content="https://preview.tabler.io/layout-combo.html">
     <meta name="twitter:image:src" content="https://preview.tabler.io/static/og.png">
@@ -45,6 +45,8 @@
     <link href="{{ asset('tabler/dist/css/tabler-payments.min.css?1685973381') }}" rel="stylesheet"/>
     <link href="{{ asset('tabler/dist/css/tabler-vendors.min.css?1685973381') }}" rel="stylesheet"/>
     <link href="{{ asset('tabler/dist/css/demo.min.css?1685973381') }}" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.css" rel="stylesheet" type="text/css" />
+    
     <style>
       @import url('https://rsms.me/inter/inter.css');
       :root {
@@ -81,7 +83,13 @@
     <script src="{{ asset('tabler/dist/libs/jsvectormap/dist/maps/world.js?1685973381') }}" defer></script>
     <script src="{{ asset('tabler/dist/libs/jsvectormap/dist/maps/world-merc.js?1685973381') }}" defer></script>
     <!-- Tabler Core -->
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
     <script src="{{ asset('tabler/dist/js/tabler.min.js?1685973381') }}" defer></script>
     <script src="{{ asset('tabler/dist/js/demo.min.js?1685973381') }}" defer></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+
+    @stack('myscript')
+
   </body>
 </html>

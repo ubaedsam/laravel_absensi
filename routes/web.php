@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\PresensiController;
 use Illuminate\Support\Facades\Route;
 
@@ -63,4 +64,16 @@ Route::middleware(['auth:karyawan'])->group(function(){
 Route::middleware(['auth:user'])->group(function(){
     Route::get('/panel/dashboardadmin',[DashboardController::class, 'dashboardadmin']);
     Route::get('/proseslogoutadmin',[AuthController::class, 'proseslogoutadmin']);
+
+    // Pengelolaan data karyawan
+    Route::get('/karyawan', [KaryawanController::class, 'index']);
+
+    // Monitoring Presensi Karyawan
+    Route::get('/presensi/monitoring',[PresensiController::class,'monitoring']);
+    Route::post('/getpresensi', [PresensiController::class, 'getpresensi']);
+
+    // Validasi Pengajuan Izin / Sakit
+    Route::get('/presensi/izinsakit',[PresensiController::class, 'izinsakit']);
+    Route::post('/presensi/approveizinsakit',[PresensiController::class, 'approveizinsakit']);
+    Route::get('/presensi/{id}/batalkanizinsakit',[PresensiController::class, 'batalkanizinsakit']);
 });

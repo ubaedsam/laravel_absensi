@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pengajuanizin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -218,6 +219,91 @@ class PresensiController extends Controller
             return redirect('/presensi/izin')->with(['success'=>'Data berhasil disimpan']);
         }else{
             return redirect('/presensi/izin')->with(['error'=>'Data gagal disimpan']);
+        }
+    }
+
+    // Monitoring Presensi Absen Karyawan
+    public function monitoring()
+    {
+        return view('presensi.monitoring');
+    }
+
+    public function getpresensi(Request $request)
+    {
+        $tanggal = $request->tanggal;
+
+        $presensi = DB::table('presensi')
+        ->select('presensi.*','nama_lengkap','nama_department')
+        ->join('karyawan','presensi.nik','=','karyawan.nik')
+        ->join('departemen','karyawan.kode_dept','=','departemen.kode_dept')
+        ->where('tgl_presensi', $tanggal)
+        ->get();
+
+        return view('presensi.getpresensi', compact('presensi'));
+    }
+
+    // Validasi Pengajuan Izin / Sakit
+    public function izinsakit(Request $request)
+    {
+        // Mengambil data
+        $query = Pengajuanizin::query();
+        $query->select('id','tgl_izin','pengajuan_izin.nik','nama_lengkap','jabatan','status','status_approved','keterangan');
+        $query->join('karyawan','pengajuan_izin.nik','=','karyawan.nik');
+        // Filter data
+        // berdasarkan tanggal
+        if(!empty($request->dari) && !empty($request->sampai)){
+            $query->whereBetween('tgl_izin', [$request->dari, $request->sampai]);
+        }
+        // berdasarkan nik
+        if(!empty($request->nik)){
+            $query->where('pengajuan_izin.nik', $request->nik);
+        }
+        // berdasarkan nama karyawan (nama lengkap)
+        if(!empty($request->nama_lengkap)){
+            $query->where('nama_lengkap','like','%'. $request->nama_lengkap . '%');
+        }
+        // berdasarkan status_approved
+        if($request->status_approved === '0' || $request->status_approved === '1' || $request->status_approved === '2'){
+            $query->where('status_approved', $request->status_approved);
+        }
+        $query->orderBy('tgl_izin', 'desc');
+        $izinsakit = $query->paginate(2);
+        $izinsakit->appends($request->all());
+
+        // $izinsakit = DB::table('pengajuan_izin')
+        // ->join('karyawan','pengajuan_izin.nik','=','karyawan.nik')
+        // ->orderBy('tgl_izin', 'desc')
+        // ->get();
+
+        return view('presensi.izinsakit', compact('izinsakit'));
+    }
+
+    public function approveizinsakit(Request $request)
+    {
+        $status_approved = $request->status_approved;
+        $id_izinsakit_form = $request->id_izinsakit_form;
+
+        $update = DB::table('pengajuan_izin')->where('id', $id_izinsakit_form)->update([
+            'status_approved' => $status_approved
+        ]);
+
+        if($update){
+            return Redirect::back()->with(['success'=>'Data berhasil di update']);
+        }else{
+            return Redirect::back()->with(['warning'=>'Data gagal di update']);
+        }
+    }
+
+    public function batalkanizinsakit($id)
+    {
+        $update = DB::table('pengajuan_izin')->where('id', $id)->update([
+            'status_approved' => 0
+        ]);
+
+        if($update){
+            return Redirect::back()->with(['success'=>'Data berhasil di update']);
+        }else{
+            return Redirect::back()->with(['warning'=>'Data gagal di update']);
         }
     }
 
